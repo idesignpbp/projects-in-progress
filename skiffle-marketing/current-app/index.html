@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skiffle — The Current App: Existing User Flows</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F4F0E6; --white:#FFFFFF; --ink:#14161C;
+    --navy:#283466; --navy-soft:rgba(40,52,102,.62);
+    --navy-line:rgba(40,52,102,.18); --navy-line-strong:rgba(40,52,102,.32);
+    --cream:#EDE7D6; --sky:#9BB4E8;
+    --serif:'Cormorant Garamond', Georgia, serif;
+    --heading:'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+    --mono:'IBM Plex Mono', monospace;
+    --maxw:1180px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{ background:var(--paper); color:var(--ink); font-family:var(--serif); font-weight:500; -webkit-font-smoothing:antialiased; }
+  a{color:inherit;}
+  img{display:block; max-width:100%;}
+  .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 32px; }
+  @media (max-width:640px){ .wrap{ padding:0 20px; } }
+
+  /* ---- proto banner ---- */
+  .proto-banner{ background:var(--ink); }
+  .proto-banner .wrap{ padding:11px 32px; text-align:center; }
+  .proto-banner__text{ font-family:var(--mono); font-size:11px; line-height:1.6; letter-spacing:.02em; color:rgba(237,231,214,.75); }
+  .proto-banner__text strong{ color:var(--sky); font-weight:600; }
+
+  /* ---- nav ---- */
+  nav{ position:sticky; top:0; z-index:50; background:rgba(244,240,230,.9); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border-bottom:1px solid var(--navy-line-strong); }
+  nav .wrap{ display:flex; align-items:center; justify-content:space-between; height:78px; }
+  .brand{ display:flex; align-items:baseline; gap:11px; text-decoration:none; }
+  .brand .word{ font-family:var(--heading); font-weight:700; font-size:23px; letter-spacing:.03em; color:var(--navy); }
+  .nav-right{ display:flex; align-items:center; gap:26px; }
+  .nav-link{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:rgba(20,22,28,.58); text-decoration:none; position:relative; padding-bottom:5px; transition:color .2s; }
+  .nav-link::after{ content:''; position:absolute; left:0; right:100%; bottom:0; height:1px; background:var(--navy); transition:right .2s; }
+  .nav-link:hover{ color:var(--navy); } .nav-link:hover::after{ right:0; }
+  .nav-cta{ font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--navy); border:1px solid var(--navy); padding:10px 18px; text-decoration:none; transition:background .2s,color .2s; }
+  .nav-cta:hover{ background:var(--navy); color:var(--paper); }
+  @media (max-width:520px){ .nav-right{ gap:16px; } }
+
+  /* ---- title block ---- */
+  .doc-head{ border-bottom:1px solid var(--navy-line); padding:72px 0 46px; }
+  .eyebrow{ font-family:var(--mono); font-size:11px; letter-spacing:.24em; text-transform:uppercase; color:var(--navy); }
+  .doc-head h1{ font-family:var(--heading); font-weight:600; font-size:clamp(34px,5vw,58px); line-height:1.06; color:var(--ink); margin:18px 0 0; letter-spacing:.002em; }
+  .doc-head h1 em{ font-style:italic; font-weight:500; color:var(--navy); }
+  .doc-head .lede{ font-size:19px; line-height:1.7; color:var(--ink); max-width:660px; margin-top:22px; }
+  .doc-meta{ display:flex; flex-wrap:wrap; gap:8px 26px; margin-top:30px; font-family:var(--mono); font-size:11px; letter-spacing:.04em; color:var(--navy-soft); text-transform:uppercase; }
+  .doc-meta b{ color:var(--navy); font-weight:600; }
+
+  /* ---- legend note ---- */
+  .legend{ display:flex; flex-wrap:wrap; gap:18px 30px; margin-top:26px; }
+  .legend span{ font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; color:var(--navy-soft); display:flex; align-items:center; gap:9px; }
+  .legend .dot{ width:20px; height:20px; border-radius:50%; background:#F6B93B; color:var(--ink); font-size:10px; display:flex; align-items:center; justify-content:center; font-weight:600; }
+  .legend .swatch{ width:16px; height:3px; background:#D8563A; display:inline-block; }
+
+  /* ---- flow sections ---- */
+  .flows{ padding:24px 0 96px; }
+  .flow{ padding:56px 0; border-bottom:1px solid var(--navy-line); }
+  .flow:last-child{ border-bottom:none; }
+  .flow__kicker{ font-family:var(--mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--navy-soft); }
+  .flow h2{ font-family:var(--heading); font-weight:600; font-size:clamp(26px,3.4vw,38px); line-height:1.15; color:var(--ink); margin:12px 0 0; }
+  .flow p.desc{ font-size:17px; line-height:1.72; color:var(--ink); max-width:660px; margin-top:14px; }
+  .flow__chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top:20px; }
+  .chip{ font-family:var(--mono); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--navy); background:rgba(40,52,102,.08); border:1px solid var(--navy-line); border-radius:2px; padding:4px 9px; }
+
+  .flow-figure{ margin-top:32px; }
+  .flow-figure a{ display:block; background:var(--white); border:1px solid var(--navy-line-strong); padding:14px; text-decoration:none; transition:border-color .2s; }
+  .flow-figure a:hover{ border-color:var(--navy); }
+  .flow-figure figcaption{ font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--navy-soft); margin-top:12px; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .flow-figure figcaption .enlarge{ color:var(--navy); }
+
+  /* ---- footer ---- */
+  footer{ background:var(--ink); padding:56px 0; }
+  footer .word{ font-family:var(--heading); font-weight:700; font-size:28px; color:var(--paper); letter-spacing:.02em; }
+  footer .tag{ font-family:var(--mono); font-size:10px; letter-spacing:.24em; text-transform:uppercase; color:var(--sky); margin-top:9px; }
+  footer .desc{ font-family:var(--serif); font-size:14px; line-height:1.8; max-width:440px; color:rgba(237,231,214,.65); margin-top:14px; }
+  footer a{ color:var(--sky); }
+</style>
+</head>
+<body>
+
+<div class="proto-banner">
+  <div class="wrap">
+    <p class="proto-banner__text"><strong>Vision Marketing Site:</strong> This site is to help communicate the project internally, not to customers.</p>
+  </div>
+</div>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="/"><span class="word">Skiffle</span></a>
+    <div class="nav-right">
+      <a class="nav-link" href="/current-app">Current App</a>
+      <a class="nav-cta" href="/prd">Review the PRD</a>
+    </div>
+  </div>
+</nav>
+
+<header class="doc-head">
+  <div class="wrap">
+    <span class="eyebrow">The current app &middot; Existing user flows</span>
+    <h1>How Skiffle works <em>today</em></h1>
+    <p class="lede">Every screen and path in the app dealers use now, mapped tab by tab. Each flow pairs the navigation diagram with the real screenshots it produces &mdash; the documented baseline the mobile-first rebuild starts from.</p>
+    <div class="doc-meta">
+      <span><b>Source</b> &nbsp;Skiffle Kickoff board</span>
+      <span><b>Flows</b> &nbsp;5 tabs</span>
+      <span><b>Synced</b> &nbsp;4 Aug 2026</span>
+    </div>
+    <div class="legend">
+      <span><span class="dot">1</span> Numbered markers tie each flow step to its screenshot</span>
+      <span><span class="swatch"></span> Red notes mark native-capability gaps (camera, mic)</span>
+    </div>
+  </div>
+</header>
+
+<main class="flows">
+  <div class="wrap">
+
+    <section class="flow" id="signin">
+      <div class="flow__kicker">Flow 01</div>
+      <h2>Sign in &amp; onboarding</h2>
+      <p class="desc">Opening the app routes through sign-in against the Trinity database. Returning users hit a loading screen and land on Orders (the default tab); new users pass through onboarding first. Failed authentication drops to a contact-support error state, and forgotten passwords branch off sign-in.</p>
+      <div class="flow__chips">
+        <span class="chip">Open App</span><span class="chip">Sign In</span><span class="chip">Trinity Database</span><span class="chip">Onboarding</span><span class="chip">Loading</span><span class="chip">Contact Support</span>
+      </div>
+      <figure class="flow-figure">
+        <a href="img/flow-1-signin.png" target="_blank" rel="noopener">
+          <img src="img/flow-1-signin.png" alt="Sign in and onboarding user flow diagram with app screenshots" loading="lazy">
+          <figcaption><span>Sign In &amp; Onboarding &mdash; navigation flow and screens</span><span class="enlarge">Open full size &rarr;</span></figcaption>
+        </a>
+      </figure>
+    </section>
+
+    <section class="flow" id="orders">
+      <div class="flow__kicker">Flow 02</div>
+      <h2>Orders</h2>
+      <p class="desc">The default landing tab. From here dealers reach Dealer Rank (and rank details), an omni-search that accepts Fabric ID, Fabric Collection, Client, Order ID, or Garment ID, and the Orders widget &mdash; which opens order details, garment cards and garment details, fabric details, and a conditional edit / track order path.</p>
+      <div class="flow__chips">
+        <span class="chip">Dealer Rank</span><span class="chip">Omni Search</span><span class="chip">Orders Widget</span><span class="chip">Order Details</span><span class="chip">Garment Cards</span><span class="chip">Edit / Track Order</span>
+      </div>
+      <figure class="flow-figure">
+        <a href="img/flow-2-orders.png" target="_blank" rel="noopener">
+          <img src="img/flow-2-orders.png" alt="Orders tab user flow diagram with app screenshots" loading="lazy">
+          <figcaption><span>Orders &mdash; navigation flow and screens</span><span class="enlarge">Open full size &rarr;</span></figcaption>
+        </a>
+      </figure>
+    </section>
+
+    <section class="flow" id="clients">
+      <div class="flow__kicker">Flow 03</div>
+      <h2>Clients</h2>
+      <p class="desc">Add a client (new client form) or search and open a client detail. From a client, dealers reach the Cloud Closet and garment list &mdash; garment cards with delete, zoom, and fabric detail &mdash; plus measurements (which open WorkFlow), an orders widget, and image capture via photo library, camera, or file.</p>
+      <div class="flow__chips">
+        <span class="chip">Add Client</span><span class="chip">Search Clients</span><span class="chip">Client Detail</span><span class="chip">Cloud Closet</span><span class="chip">Measurements</span><span class="chip">Images</span>
+      </div>
+      <figure class="flow-figure">
+        <a href="img/flow-3-clients.png" target="_blank" rel="noopener">
+          <img src="img/flow-3-clients.png" alt="Clients tab user flow diagram with app screenshots" loading="lazy">
+          <figcaption><span>Clients &mdash; navigation flow and screens</span><span class="enlarge">Open full size &rarr;</span></figcaption>
+        </a>
+      </figure>
+    </section>
+
+    <section class="flow" id="fabrics">
+      <div class="flow__kicker">Flow 04</div>
+      <h2>Fabrics</h2>
+      <p class="desc">Two ways in: find an individual fabric (with search / filter / voice) or browse collections (with search / filter / scan). Collections open collection and fabric details; fabric notifications support favorites, edit, unsubscribe-all, and an edit modal. Native camera scan and microphone input are called out along the way.</p>
+      <div class="flow__chips">
+        <span class="chip">Find Fabric</span><span class="chip">Browse Collections</span><span class="chip">Search / Filter / Voice</span><span class="chip">Notifications</span><span class="chip">Favorites</span><span class="chip">Fabric Details</span>
+      </div>
+      <figure class="flow-figure">
+        <a href="img/flow-4-fabrics.png" target="_blank" rel="noopener">
+          <img src="img/flow-4-fabrics.png" alt="Fabrics tab user flow diagram with app screenshots" loading="lazy">
+          <figcaption><span>Fabrics &mdash; navigation flow and screens</span><span class="enlarge">Open full size &rarr;</span></figcaption>
+        </a>
+      </figure>
+    </section>
+
+    <section class="flow" id="more">
+      <div class="flow__kicker">Flow 05</div>
+      <h2>More</h2>
+      <p class="desc">The account and secondary-tools tab. It gathers the Model Library, Options Library, and Materials Pack (each with their image sets), the Price List (view options, price by garment), the Dealer Rank Report, and the Shoulder Slope reading &mdash; left / right shoulder measured from 1.5&Prime; (half high) to 3.5&Prime; (extremely sloping).</p>
+      <div class="flow__chips">
+        <span class="chip">Model Library</span><span class="chip">Options Library</span><span class="chip">Materials Pack</span><span class="chip">Price List</span><span class="chip">Dealer Rank Report</span><span class="chip">Shoulder Slope</span>
+      </div>
+      <figure class="flow-figure">
+        <a href="img/flow-5-more.png" target="_blank" rel="noopener">
+          <img src="img/flow-5-more.png" alt="More tab user flow diagram with app screenshots" loading="lazy">
+          <figcaption><span>More &mdash; navigation flow and screens</span><span class="enlarge">Open full size &rarr;</span></figcaption>
+        </a>
+      </figure>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="word">Skiffle</div>
+    <div class="tag">v1 &middot; Native rebuild</div>
+    <p class="desc">The current app, documented so the rebuild has a clear baseline. See the <a href="/prd">product requirements</a> or head <a href="/">back to the site</a>.</p>
+  </div>
+</footer>
+
+</body>
+</html>
