@@ -168,6 +168,8 @@
         <a href="#19-api-and-data-model-draft">19. API and data model (draft)</a>
         <a href="#20-qa-and-testing">20. QA and testing</a>
         <a href="#21-v2-vision">21. v2 vision</a>
+        <a href="#22-competitor-review">22. Competitor review</a>
+        <a href="#23-open-notes">23. Open notes</a>
       </nav>
     </aside>
     <main class="prose">
@@ -259,7 +261,7 @@
 </table></div>
 <hr />
 <h2 id="v1-scope">v1 scope</h2>
-<p>v1 is basic parity with the current app, with two deltas. The StyleFlow dynamic visualizer (the editor) is excluded, and the Shoulder Slope is a nice-to-have rather than a requirement. The one genuinely new piece is the Dashboard, likely a minimal landing page in v1 with its widgets still to be determined. Navigation is five bottom tabs: Dashboard, Orders, Clients, Fabrics, and Resources. The foundation under all of it (sign-in on existing Trinity credentials, both platforms from one codebase, Rails as the data source, and the store-update-plus-forced-update launch) is assumed.</p>
+<p>v1 is basic parity with the current app, with two deltas. The StyleFlow dynamic visualizer (the editor) is excluded, and the Shoulder Slope is a nice-to-have rather than a requirement. Beyond parity, three things are genuinely new in v1, the Dashboard (likely a minimal landing page, widgets TBD), the app showing the dealer's own logo instead of Trinity's (FR-34), and a simple manual todo list (FR-35). Navigation is five bottom tabs: Dashboard, Orders, Clients, Fabrics, and Resources. The foundation under all of it (sign-in on existing Trinity credentials, both platforms from one codebase, Rails as the data source, and the store-update-plus-forced-update launch) is assumed.</p>
 <p><strong>Dashboard (new, likely minimal in v1)</strong></p>
 <ul>
 <li>Dealer Rank widget, the rank pill (moved here from Orders) with a tap-through to the full Rank Report.</li>
@@ -595,6 +597,18 @@
 <td>DECIDED, v1</td>
 <td>Port the full notifications apparatus, the subscriptions list, editing a subscription (the Edit Modal), Unsubscribe All, and the email and notes fields, not just a passive out-of-stock alert. The APIs already exist in the system, so this is wiring the native UI to them. This covers FIX-4, a favorite that goes unavailable surfaces here rather than silently</td>
 </tr>
+<tr>
+<td>FR-34</td>
+<td>White-label dealer logo</td>
+<td>DECIDED, v1</td>
+<td>The dealer's logo already lives in Trinity's system, so it is pulled on sign-in (via the Trinity credentials, FR-1, returned by <code>GET /me</code>) and shown in the app in place of Trinity's branding. No uploader or picker in v1. Display constraints, a fixed header slot with a max height and width and preserved aspect ratio, and a fallback to Trinity branding when a dealer has no logo on file. This is a deliberate carve-out from the single standardized design (section 10), the logo is the only per-dealer element, while colors and theme stay standardized. An image uploader is v2 (v2 vision)</td>
+</tr>
+<tr>
+<td>FR-35</td>
+<td>Simple todo list</td>
+<td>DECIDED, v1</td>
+<td>Manual, user-generated todos a dealer can create, edit, archive, and delete. Freeform text, not linked to a client or order in v1, and not a with-the-client tool since dealers have little time in a meeting. Needs a new Trinity table so the same todos can surface on the web later. The v2 direction is action-based todos generated from events (v2 vision)</td>
+</tr>
 </tbody>
 </table></div>
 <h3 id="verified-defects-to-resolve-in-v1-fix">Verified defects to resolve in v1 (<code>FIX</code>)</h3>
@@ -655,7 +669,7 @@
 <li><strong>System of record.</strong> The existing Rails API called directly. No BFF, add a thin shim only if a concrete need appears.</li>
 <li><strong>Performance.</strong> Raw native performance is part of the native dividend.</li>
 <li><strong>Shipping.</strong> EAS Build plus OTA updates.</li>
-<li><strong>Design system.</strong> Standardized, light and dark following the system setting, no per-dealer customization, token-based.</li>
+<li><strong>Design system.</strong> Standardized, light and dark following the system setting, token-based. The one per-dealer element is the dealer's own logo (FR-34), otherwise no per-dealer theming or customization.</li>
 <li><strong>Garment render (must-have).</strong> The Fabric Explorer garment render, a dynamic Picario image keyed by fabric, garment type, and model, with the swatch and garment toggle, is the emotional selling moment, dealers screenshot it into client texts. It is served as a dynamic URL (the fabric is in the URL), so the app composes the URL and shows the image, no proxy needed. Handle a missing or failed render gracefully by falling back to the swatch. A confirmed v1 must-have.</li>
 </ul>
 <h2 id="8-scope">8. Scope</h2>
@@ -689,7 +703,7 @@
 <li><strong>Navigation.</strong> A five-item bottom navigation: Dashboard, Orders, Clients, Fabrics, and Resources. Resources is the reference hub (tutorials, materials pack, spec charts, and more, FR-17). This supersedes the earlier four-tab More-and-Tools structure.</li>
 <li><strong>Account and Logout.</strong> A persistent avatar icon in the top-right of every tab opens the Account and Profile screen and Logout (FR-15). It stays reachable from any tab, matching today's app, and is the home for Account and Logout now that More is gone.</li>
 <li><strong>Home and landing.</strong> The app opens on the Dashboard, which is also a bottom-nav tab. In v1 it is a minimal landing page, the rank widget, global search, and an order-status summary whose statuses tap through to a filtered Orders list (see v1 scope). Orders stay one tap away so the dashboard does not bury them.</li>
-<li><strong>Design system.</strong> Standardized, light and dark (system setting), no per-dealer customization, token-based.</li>
+<li><strong>Design system.</strong> Standardized, light and dark (system setting), token-based. The one per-dealer element is the dealer's own logo, which replaces Trinity's branding in the header (FR-34). Everything else stays standardized, with no per-dealer theming.</li>
 <li><strong>Component library.</strong> Use gluestack-ui, a universal React Native component kit, for the frontend UI. It fits the token-based design system and gives the team prebuilt components to move quickly. This supersedes the earlier NativeWind recommendation.</li>
 </ul>
 <h2 id="11-milestones-and-timeline">11. Milestones and timeline</h2>
@@ -1130,7 +1144,7 @@
 </tr>
 <tr>
 <td><code>GET /me</code></td>
-<td>Current dealer, profile and permissions, drives nav and gating (FR-3)</td>
+<td>Current dealer, profile, permissions, and logo URL, drives nav, gating, and the white-label logo (FR-3, FR-34)</td>
 <td>Confirm</td>
 </tr>
 <tr>
@@ -1306,6 +1320,23 @@
 </tr>
 </tbody>
 </table></div>
+<p><strong>Todos</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>Purpose</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /todos</code>, <code>POST /todos</code>, <code>PATCH /todos/{id}</code>, <code>DELETE /todos/{id}</code></td>
+<td>Simple user-generated todos, list, create, edit, archive (via a status), and delete (FR-35). A new Trinity table so the same todos can surface on the web later</td>
+<td>New</td>
+</tr>
+</tbody>
+</table></div>
 <h3 id="data-model-to-pin-down">Data model to pin down</h3>
 <ul>
 <li>The identity bridge, how a Replit identity maps to a Trinity dealer record, its permissions, and any sub-accounts. Sub-account behavior (what they see, price-list gating) is still unverified, and each answer becomes a rule here (FR-3).</li>
@@ -1343,6 +1374,28 @@
 <p><strong>Custom Models</strong></p>
 <p>Two parts. A viewer showing saved custom models in a grid, where each model is a saved collection of validated garment options, the lighter lift and the closest to surfacing the existing saved-model concept. And an editor that lets a dealer build a custom model with visual line-drawing selectors, the heavier lift that needs research. If it is pulled forward, the viewer lands before the editor.</p>
 <p>Open items to settle when Custom Models is picked up: the naming ("Custom Models" versus "Saved Styles"), the known 10-character name-truncation bug in the existing web configurator, what a saved model actually does in the app given that order creation is also v2, and the sequencing of the grid viewer ahead of the line-drawing editor. The flow-archaeology board had shown an active push to build custom models now, but the current call keeps both out of v1.</p>
+<p><strong>Logo image uploader</strong></p>
+<p>v1 pulls the dealer's logo from Trinity on sign-in (FR-34). v2 adds an uploader so a dealer can upload or replace their own logo in the app, with the image constraints (format, transparent background, dimensions, aspect ratio) enforced at upload.</p>
+<p><strong>Action-based todos</strong></p>
+<p>The v1 todo list (FR-35) is manual and freeform. The v2 direction turns notifications into actions, todos generated automatically from events, each opening to the detail and the next step. Examples, "choose a replacement fabric for Ben's order" when a chosen fabric goes out of stock, which opens to related fabrics matching the source fabric's characteristics, "update your credit card," "send a thank-you to Ben after your meeting," and "schedule a delivery for Ben" when a garment reaches the deliver phase. This builds on things v1 already has, out-of-stock surfaces through fabric notifications and related-fabrics already exists, so the work is wiring events to todos and adding the entity links the v1 todos deliberately skip.</p>
+<p><strong>Alterations tracking</strong></p>
+<p>When a delivered garment needs adjustment, the dealer sends it to a local alterations shop and has no way to track it today. A v2 alterations flow would record what the alterations are, route to the shop, and track status and return, essentially a second, outward-facing production pipeline. Open questions, is the alterations shop a tracked entity, who updates status, and does it reuse the order-status UI.</p>
+<p><strong>QuickBooks and Calendly integrations</strong></p>
+<p>Candidates to validate, not commitments. QuickBooks for the financial and accounting side, and Calendly for scheduling client meetings, which pairs with the action-based todos ("schedule a delivery," "send a thank-you"). Both are third-party integrations that carry their own scoping.</p>
+<h2 id="22-competitor-review">22. Competitor review</h2>
+<p>A light, point-in-time scan of Trands USA (Dayang Trands), a direct made-to-measure competitor, based on their public site and clothier resource library, not a hands-on dealer-account walkthrough. External context, not a feature checklist to match.</p>
+<p><strong>Their dealer platform.</strong> Trands clothiers order and sell through USTYYLIT (currently version 4, launched January 2023), a web-based garment-design and ordering platform. It is browser-based and login-gated, the same category as Trinity's WorkFlow, and no native iOS or Android clothier app surfaced in either app store.</p>
+<p><strong>What USTYYLIT does well.</strong> Fast cart-based order entry (their pitch is ordering a jacket, trouser, and shirt in under five minutes), a dynamic wardrobing tool called STYYLcart that generates garment images on demand (their analog to our Picario garment render), a body-measurement and remote-selling mode for virtual fittings over video call, custom linings built from a dealer's own photography or artwork, and fabric swatchbooks.</p>
+<p><strong>What this means for Skiffle.</strong></p>
+<ul>
+<li>The clearest gap in their favor is mobile. Their clothier tool is web-only, so a genuinely mobile-first native app is a real differentiator for Trinity, which is exactly Skiffle's bet.</li>
+<li>Several USTYYLIT strengths are things Skiffle deliberately defers, fast order entry (order creation is v2), custom linings (v2 vision), and deeper measurement tooling (v1 is read-only). On ordering depth they are ahead, and that is a conscious v1 tradeoff, not an oversight.</li>
+<li>Their dynamic garment images confirm the garment render is table stakes in this category, not a novelty, which supports keeping it a v1 must-have.</li>
+</ul>
+<p>This is a surface read from public materials. A dealer-account walkthrough of USTYYLIT would sharpen it, and it should be refreshed periodically since their platform updates regularly.</p>
+<h2 id="23-open-notes">23. Open notes</h2>
+<p>Captured observations that are not yet decisions and do not drive scope on their own.</p>
+<p><strong>Usage during active selling (stakeholder note).</strong> A stakeholder observed that dealers likely will not lean on the app much during active selling, they have little time in a client meeting. Part of this is habit, the old Trinity software was clunky and not always white-labelled, so dealers avoided pulling it out in front of clients. This suggests the app's real value sits in preparation and follow-up rather than the live selling moment. To act on it, we need a phased pre-sell, sell, and post-sell use-case segmentation, so we can isolate where each feature is most useful. Recorded as a note, not a driver, nothing else in this PRD is rewritten around it yet.</p>
     </main>
   </div>
 </div>
