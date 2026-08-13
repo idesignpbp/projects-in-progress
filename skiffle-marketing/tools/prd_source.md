@@ -4,13 +4,9 @@
 
 ## Stakeholder overview
 
-**Right now.** We are reviewing this plan with stakeholders before the build begins. Ryan is working on tickets and clarity on feature assessment. We are also trying to figure out best way to keep the marketing website in sync.
+**In plain terms.** We are rebuilding the Skiffle dealer app as a true native app for iPhone and Android, replacing today's desktop build that was only stretched onto a phone. The first release does what the current app already does, minus one visual styling tool, so dealers get a faster, native experience they can trust in front of a client.
 
-**Project in plain terms.** We are rebuilding the Skiffle dealer app as a true mobile app for iPhone and Android, replacing today's version that was built for desktop and only stretched onto a phone. The first release does what the current app already does, minus one visual styling tool, so dealers get a faster, native experience they can trust in front of a client.
-
-**Where we are in the process.** The plan is essentially settled. What the first version includes, how we will measure success, and the rough launch window (before the January shows) are decided. A small number of choices are still open and are marked for discussion below.
-
-**What is next.** Iron out some collaboration tools and clean up the plan, begin the build (next week), and show working prototypes at the first demo in August, aiming to launch in early December.
+**Status and next.** The plan is essentially settled, what v1 includes, how we measure success, and the launch window (before the January shows) are decided, with a few open choices marked for discussion. Next, finalize the plan, begin the build, show working prototypes at the first demo, and aim to launch in early December.
 
 ## Contents
 
@@ -209,7 +205,7 @@ The board maps these to a full story set (OLD-01 to OLD-32 for current behavior,
 |FR-8|Inline carrier tracking, Rails proxies the carrier API with keys server-side|LOCKED, revised|Multi-carrier (UPS, FedEx, or DHL), not UPS only. The estimated shipping delivery (ESD) date, latest status, last scan or location, and tracking number are shown inline. The ESD date is tappable and deep-links to that carrier's tracking page with the tracking number prefilled and progress shown. This revises the original "dealer never taps out" stance: primary tracking stays inline, and the carrier site is an optional tap for full history|
 |FR-9|Global search, server-side via Rails, debounced predictive, permission-scoped|LOCKED|Resolves five entity types, Fabric ID, Fabric Collection, Client, Order ID, and Garment ID. A bare Garment ID must resolve distinctly from an Order ID, and a Collection name distinctly from a single fabric. Must accept an item number as `T2-1881370`, `t2 1881370`, or bare `1881370` (prefix normalization). See FIX-5 for the two-index defect|
 |FR-10|QR scan-to-find for fabric folders, resolves via global lookup, opens fabric detail|LOCKED|Reuses the flagship's camera stack. See FIX-6 for dead legacy codes|
-|FR-11|Writes (read-mostly v1), create and edit client plus contacts, upload photos to a client, add a photo to a garment, delete and archive a garment in Cloud Closet, favorite fabrics per dealer|LOCKED|Photo upload at two attach points. The garment photo, delete, and archive are the writes into the otherwise read-only order domain. Delete and archive need a confirm-guard and Rails endpoints (see the API section)|
+|FR-11|Writes (read-mostly v1), create and edit client plus contacts, upload photos to a client, add a photo to a garment, set a client profile photo (the avatar shown in place of initials), delete and archive a garment in Cloud Closet, favorite fabrics per dealer|LOCKED|Photo upload at two attach points. The garment photo, delete, and archive are the writes into the otherwise read-only order domain. Delete and archive need a confirm-guard and Rails endpoints (see the API section). The client profile photo is a single designated avatar, distinct from the general client photo set|
 |FR-12|Resources hub for v1, tutorials, the materials (Digital Materials Pack) view, spec charts, and other reference content still to be finalized (candidates include the model library, options library, fitting guide, and the permission-gated fabric price list)|LOCKED|Fabric Explorer is now its own Fabrics tab, not under Resources. Dropped, Embroidery (Template and Text), not in production. The hub is named Resources (FR-17)|
 |FR-13|Push notifications, transactional order-lifecycle for delayed, shipped, and delivered, plus chat-reply push|DECIDED|Delivered through the native OS push channels directly, APNs on iOS and FCM on Android, coded per platform, with no Intercom or third-party push provider. The delayed alert is the highest-value one. Rails emits an order-status event and the app registers a device token (see the API and data model section). Include an opt-in and preferences step tied to Account and Settings. Intercom stays scoped to live chat (FR-27), never transactional push|
 |FR-14|Client text notes ("Add Notes")|DECIDED, writable in v1|Joins the small write set alongside FR-11, per-dealer and per-client. Needs a Rails notes write endpoint|
@@ -231,6 +227,7 @@ The board maps these to a full story set (OLD-01 to OLD-32 for current behavior,
 |FR-33|Fabric notifications management|DECIDED, v1|Port the full notifications apparatus, the subscriptions list, editing a subscription (the Edit Modal), Unsubscribe All, and the email and notes fields, not just a passive out-of-stock alert. The APIs already exist in the system, so this is wiring the native UI to them. This covers FIX-4, a favorite that goes unavailable surfaces here rather than silently|
 |FR-34|White-label dealer logo|DECIDED, v1|The dealer's logo already lives in Trinity's system, so it is pulled on sign-in (via the Trinity credentials, FR-1, returned by `GET /me`) and shown in the app in place of Trinity's branding. No uploader or picker in v1. Display constraints, a fixed header slot with a max height and width and preserved aspect ratio, and a fallback to Trinity branding when a dealer has no logo on file. This is a deliberate carve-out from the single standardized design (section 10), the logo is the only per-dealer element, while colors and theme stay standardized. An image uploader is v2 (v2 vision)|
 |FR-35|Simple todo list|DECIDED, v1|Manual, user-generated todos a dealer can create, edit, archive, and delete. Freeform text, not linked to a client or order in v1, and not a with-the-client tool since dealers have little time in a meeting. Needs a new Trinity table so the same todos can surface on the web later. The v2 direction is action-based todos generated from events (v2 vision)|
+|FR-36|Client presentation mode, a display toggle under the account avatar that hides all pricing (and optionally Trinity references) while a dealer is in front of a client|DECIDED, v1|Display-only and client-side, not a permission change, so distinct from the API-enforced gate in FR-3, and needs no backend since there is no profile write path (FR-15). Lives under the account avatar (FR-15) and complements the white-label carve-out (FR-34). OPEN, whether it also suppresses Trinity references beyond the existing white-label, and whether the toggle persists per device|
 
 
 ### Verified defects to resolve in v1 (`FIX`)
@@ -370,50 +367,17 @@ Conscious deferrals, not omissions:
 
 ## 14. Preliminary ideas from brainstorming
 
-These come from the Skiffle Kickoff brainstorming board and are captured as preliminary, not committed. Where one conflicts with a LOCKED call, the current PRD wins and the idea is noted as a divergence to reconcile.
+These come from the Skiffle Kickoff board, captured as preliminary, not committed. Where one conflicts with a LOCKED call, the current PRD wins. Most have since been resolved into decisions elsewhere in this doc, and are listed here only so the brainstorm isn't lost.
 
-**Dashboard and home concept** The brainstorm reframes the Orders landing as a light dashboard. Ideas raised:
-
-* A Dealer Rank chip at top-left showing rank only, with no dollar amounts (an explicit dealer request), a trend arrow versus last month, and a tap-through to the Rank Report (US-03, US-04, US-05).
-* A headline announcement banner that is dismissable (US-08, US-09).
-* At-a-glance business state, meaning order status, number of clients, and delays or notifications.
-* A Delays tab carrying a red badge with the count of late orders (US-12).
-* Order-list controls, meaning an All, Open, Completed filter, a sort dropdown, pagination at about 100 per page, and collapsible order cards (US-13, US-14, US-15, US-17).
-* A Saved tab for work started but not submitted (US-11), which only becomes meaningful once order creation exists (v2).
-
-The dashboard's actual contents are still the open question from section 10. This is the menu of candidates, not a locked layout.
-
-**Navigation model** Two different structures appear on the board and need reconciling:
-
-* A persistent top navigation with Orders, Clients, Fabrics, University, Support, Marketing, and My Account (US-01), which introduces University, Support, and Marketing as new areas.
-* A four-item bottom nav of Orders, Clients, Fabrics, and More (from the in-depth app-flow walkthrough), with everything else under More.
-
-Resolved. v1 uses a five-item bottom nav (Dashboard, Orders, Clients, Fabrics, Resources), with the reference hub named Resources (section 10). The top-nav areas Support and Marketing are not v1, and University is folded into Resources.
-
-**Intercom live chat** US-31 proposes a persistent in-app live-chat messenger so a dealer can get immediate support on an order or platform question without leaving the app or sending an email. It fits the responsive human backstop that the closer archetype relies on. Resolved. This is now a v1 feature, FR-27, using Intercom for chat, reached from the Resources tab. Transactional push stays on the native OS channels (FR-13), so Intercom is scoped to chat only.
-
-**Onboarding** An App Launch flow proposes onboarding with intro cards plus contextual tooltips, aimed at the low-tech veteran who will only adopt if the first run is hand-held. Resolved. Included in v1 as a short first-run walkthrough of the non-negotiable features (FR-30).
-
-**Account menu** A richer account menu is sketched, covering profile edits, push preferences, an App Guide, and log out, replacing today's avatar, name, and log-out-only screen. This overlaps FR-15 (profile editing) and the FR-13 opt-in step, and it gives push preferences somewhere to live.
-
-**Export all orders** US-30 proposes an Export All Orders button that downloads a CSV, so a dealer can analyze history in a spreadsheet or share it. A new read and export path, no write.
-
-**Biometric and Face ID [PRELIMINARY, diverges from a v2 deferral]** The Auth Standalone flow floats Face ID setup and extracting Forgot Password into its own flow. Face ID conflicts with the current deferral of biometric auth to v2. The Forgot Password extraction aligns with FR-19. Kept preliminary, biometric stays v2 unless reprioritized.
-
-**Flow-design backlog** The board carries a priority list of flows still to be designed, useful for sequencing design work:
-
-* High, the Clients flow (list, detail, images, measurements, cloud closet, communication) and a New Order Creation flow focused on custom models.
-* Medium, My Account and Settings, and Tools or University (Model Library, Options Library, Rank Report, and Shoulder Slope sub-flows).
-* Low, Auth standalone (extract Forgot Password, add Face ID setup).
-
-The High-priority "New Order Creation flow focused on custom models" reflects the brainstorm's enthusiasm, but the current decision keeps both order creation and custom models out of v1 (section 13). The design work can still be sequenced, it just targets v2.
-
-**Order grouping, a superseded idea** US-16 proposes grouping orders under a client-name header. This is superseded by the locked decision to show one card per Dealer Order with client names repeating (FR-22 context and the flow-archaeology ruling). Recorded here only so the brainstorm story isn't lost.
+* **Dashboard candidates (open).** A rank chip (rank only, no dollars, a trend arrow, tap-through to the Rank Report), a dismissable announcement banner, at-a-glance business state (order status, client count, delays), a Delays tab with a count badge, order-list controls (All/Open/Completed, sort, ~100 per page, collapsible cards), and a Saved tab for unsubmitted work (meaningful only once order creation exists, v2). The dashboard's actual contents remain the open question from section 10.
+* **Resolved into decisions.** The navigation model reconciled to the five-tab bottom nav with Resources (section 10); Intercom live chat adopted as FR-27; first-run onboarding as FR-30; order grouping (US-16) superseded by one-card-per-order (FR-22).
+* **Still preliminary.** A richer account menu (profile edits, push preferences, App Guide, logout) overlapping FR-15 and the FR-13 opt-in; Export All Orders (US-30), a read-only CSV export; and Biometric / Face ID, which stays v2 (extracting Forgot Password aligns with FR-19).
+* **Flow-design backlog (for sequencing).** High, the Clients flow and a New Order Creation flow; Medium, My Account and Settings and the Tools/University sub-flows; Low, Auth standalone. Order creation and custom models stay out of v1 (section 13).
 
 ## 15. Appendix
 
 * **Primary source.** The Skiffle Rebuild, Pre-PRD Alignment (Trinity Apparel kickoff session).
-* **Evidence base.** The flow-archaeology board, one flowchart per tool, OLD versus NEW, with a live-app crawl (Boozer McClure account) plus reconciliation against Niki's design files (2022, 2024, and 2026 eras). Each flow carries a crawl-confidence percentage and a manual-checks list of open verifications. Findings are point-in-time, newest wins. "Clothier" and "dealer" are used interchangeably.
+* **Evidence base.** The flow-archaeology board, one flowchart per tool, OLD versus NEW, with a live-app crawl (Boozer McClure account) plus reconciliation against Niki's design files (2022, 2024, and 2026 eras). Each flow carries a crawl-confidence percentage and a manual-checks list of open verifications. Findings are point-in-time, newest wins. Terminology, "dealer" is the internal term (code, internal docs, and this PRD) and "clothier" is user-facing (app UI and clothier-facing communications), no longer interchangeable, applied across the app UI in a microcopy pass.
 * **Story sets.** OLD-01 to OLD-32 (current behavior) and US-01 to US-32 (targets) are the detailed acceptance-criteria source.
 * **Brainstorming source.** The Skiffle Kickoff board (product-development canvas, the US-01 to US-32 story wall, in-depth Orders and Fabrics flow walkthroughs, component and reference-library inventories, and the flow-design backlog). Section 14 draws from it. Ideas there are preliminary and predate the locked decisions elsewhere in this doc.
 * **Usage baseline.** `skiffle-usage-baseline.csv`, digitized from photographs of the current iOS (Active Devices) and Android (DAU/MAU and Installed audience) printouts covering March to June 2026. Section 4 summarizes it. Transcribed from images, so verify against the source export.
@@ -724,7 +688,7 @@ This is a surface read from public materials. A dealer-account walkthrough of US
 
 Captured observations that are not yet decisions and do not drive scope on their own.
 
-**Usage during active selling (stakeholder note).** A stakeholder observed that dealers likely will not lean on the app much during active selling, they have little time in a client meeting. Part of this is habit, the old Trinity software was clunky and not always white-labelled, so dealers avoided pulling it out in front of clients. This suggests the app's real value sits in preparation and follow-up rather than the live selling moment. To act on it, we need a phased pre-sell, sell, and post-sell use-case segmentation, so we can isolate where each feature is most useful. Recorded as a note, not a driver, nothing else in this PRD is rewritten around it yet.
+**Usage during active selling.** A stakeholder noted that dealers likely won't lean on the app much during active selling, they have little time in a meeting, and habit from the old clunky, not-always-white-labelled software adds to it. This suggests the app's real value is in preparation and follow-up rather than the live selling moment. Acting on it would need a pre-sell / sell / post-sell use-case segmentation. Recorded as a note only.
 
 # 24. Project Expenses
 
