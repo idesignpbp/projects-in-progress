@@ -19,12 +19,20 @@ OUT = os.path.join(HERE, "..", "prd", "index.html")
 
 raw = open(SRC).read()
 
+# Version label, read from the canvas title line "# PRD [v1.2]" so page stays in sync.
+_mver = re.search(r'#\s*PRD\s*\[([^\]]+)\]', raw)
+VERSION = _mver.group(1).strip() if _mver else "v1.1"
+SYNCED = "13 Aug 2026"  # date of the last canvas sync
+
 # Split off the two leading H1s (title + doc title) for the hero; body starts at Stakeholder overview
 idx = raw.index("## Stakeholder overview")
 body_md = raw[idx:]
 # Drop the manual "Contents" bullet list (the sticky sidebar TOC replaces it),
 # but preserve the author/stakeholder metadata table that follows it.
 body_md = re.sub(r'\n## Contents\n.*?(?=\n\|\|\|)', '\n', body_md, count=1, flags=re.S)
+# Self-heal stray single-hash numbered section headings ("# 24. Foo" -> "## 24. Foo")
+# so every numbered section renders as an H2 and lands in the sidebar TOC.
+body_md = re.sub(r'(?m)^#\s+(\d+\.\s)', r'## \1', body_md)
 
 md = markdown.Markdown(extensions=["tables", "fenced_code", "sane_lists", "toc", "attr_list"],
                        extension_configs={"toc": {"permalink": False}})
@@ -70,7 +78,7 @@ TEMPLATE = """<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Skiffle PRD v1.1 — Product Requirements Document</title>
+<title>Skiffle PRD __VERSION__ — Product Requirements Document</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -194,14 +202,14 @@ TEMPLATE = """<!DOCTYPE html>
 
 <header class="doc-head">
   <div class="wrap">
-    <span class="eyebrow">Product Requirements Document &middot; v1.1</span>
+    <span class="eyebrow">Product Requirements Document &middot; __VERSION__</span>
     <h1>Skiffle Rebuild<br><em>Mobile-first native app</em></h1>
     <p class="lede">Rebuilding the Skiffle dealer app as a true native app for iPhone and Android, replacing today's desktop build stretched onto a phone, so dealers get a faster, native experience they can trust in front of a client.</p>
     <div class="doc-meta">
       <span><b>Target release</b> &nbsp;v1 · Late Dec 2026</span>
       <span><b>Build</b> &nbsp;React Native · Expo · Replit</span>
       <span><b>Status</b> &nbsp;In review</span>
-      <span><b>Last synced</b> &nbsp;4 Aug 2026</span>
+      <span><b>Last synced</b> &nbsp;__SYNCED__</span>
     </div>
   </div>
 </header>
@@ -232,7 +240,8 @@ TEMPLATE = """<!DOCTYPE html>
 </html>
 """
 
-page = TEMPLATE.replace("__TOC__", toc_html).replace("__BODY__", body)
+page = (TEMPLATE.replace("__TOC__", toc_html).replace("__BODY__", body)
+        .replace("__VERSION__", VERSION).replace("__SYNCED__", SYNCED))
 import os
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 open(OUT, "w").write(page)

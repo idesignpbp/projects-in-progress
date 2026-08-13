@@ -1,4 +1,4 @@
-# PRD [v1.1]
+# PRD [v1.2]
 
 # Skiffle Rebuild (Mobile-First Native App), Product Requirements Document
 
@@ -202,7 +202,7 @@ The board maps these to a full story set (OLD-01 to OLD-32 for current behavior,
 |FR-2|Store the session and tokens in a hardware-backed secure store (expo-secure-store, iOS Keychain and Android Keystore)|LOCKED|Not plain AsyncStorage. The Replit OAuth flow manages the session established over Trinity credentials|
 |FR-29|Replit-to-Trinity credential and session bridge|DECIDED|The Replit OAuth flow validates against Trinity credentials via Trinity APIs, and the authenticated session authorizes Rails data calls scoped to that dealer. Because the identity is the dealer's existing Trinity account, there is no separate account, no first-run account creation, and no new-account friction at the cutover|
 |FR-3|Server-driven, API-enforced permissions, app renders nav and features from credentials|LOCKED|Price-list gating for sub-accounts is in scope. Hiding UI is presentation only, the API is the real gate. Permissions key off the dealer's Trinity account, the same identity used to sign in (FR-1)|
-|FR-4|Shoulder Slope flagship, live device-tilt inclinometer via expo-sensors, large degree readout|CANDIDATE, v1 nice-to-have|Not camera or CV. Display-only, the app does not persist the value. Error state is an instrument guard, not data validation. Wanted for v1 and the January-shows story, but a nice-to-have rather than a requirement, and the first thing to cut if the build runs hot|
+|FR-4|Shoulder Slope flagship, live device-tilt inclinometer via expo-sensors, large degree readout; include user preference toggle to reverse the active shoulder orientation so that dealer can stand front or back of client|CANDIDATE, v1 nice-to-have|Not camera or CV. Display-only, the app does not persist the value. Error state is an instrument guard, not data validation. Wanted for v1 and the January-shows story, but a nice-to-have rather than a requirement, and the first thing to cut if the build runs hot|
 |FR-5|Measurements, native read-only view|LOCKED|Replaces today's Safari plus second-Workflow-login kickout. Action, confirm the Rails measurements read path exists|
 |FR-6|View orders, order to its garments to each garment's production stage|LOCKED|Status is per-garment, not one order-level badge|
 |FR-7|Full production pipeline ported at parity, display-only from Rails|LOCKED|Fabric Hold through Delivery, plus Direct Ship and Cancelled. Home keeps the simplified Pending, In Progress, Delayed roll-up. Submitted orders only|
@@ -286,6 +286,7 @@ Backend items surfaced by the crawl:
 ## 10. Design and UX
 
 * **Visual direction.** The old design file is the previous design, not the target. The visual layer is an open exploration (Mobbin-driven) while IA, screens, and flows hold at parity.
+    * **SIDE QUEST:** Explore expanded Trinity branding so that all documents, digital platforms, and marketing is consistent. Potential for a brand refresh. **ETA: Aug 12 for discussion.**
 * **Navigation.** A five-item bottom navigation: Dashboard, Orders, Clients, Fabrics, and Resources. Resources is the reference hub (tutorials, materials pack, spec charts, and more, FR-17). This supersedes the earlier four-tab More-and-Tools structure.
 * **Account and Logout.** A persistent avatar icon in the top-right of every tab opens the Account and Profile screen and Logout (FR-15). It stays reachable from any tab, matching today's app, and is the home for Account and Logout now that More is gone.
 * **Home and landing.** The app opens on the Dashboard, which is also a bottom-nav tab. In v1 it is a minimal landing page, the rank widget, global search, and an order-status summary whose statuses tap through to a filtered Orders list (see v1 scope). Orders stay one tap away so the dashboard does not bury them.
@@ -309,7 +310,8 @@ Proposed schedule, back-planned from a launch before the January 2027 industry s
 |Kickoff grilling and alignment session|29 to 30 Jun 2026|Completed|
 |Pre-PRD alignment doc|17 Jul 2026|Completed|
 |PRD review with stakeholders|29 Jul 2026|Approval gate. Includes pre-marketing site and video|
-|Demo Day 1 (prototypes)|12 Aug 2026|Casual presentation of current prototype|
+|Leadership Update|12 Aug 2026|WIP update; prototype was available but too early to really dive into; [Monday.com](http://Monday.com) research precedence.|
+|Demo Day 1 (prototypes)|End Aug (TBD; add to calendar)|Casual presentation of current prototype|
 |Demo Day 2 (prototypes)|TBD|TBD|
 |Feature-complete build, internal alpha begins|Late Sep 2026|AI-assisted build may reach this sooner|
 |QA and hardening, Android sensor validation, backend endpoints integrated|Early-to-mid Oct 2026|Less compressible than build|
@@ -723,3 +725,14 @@ This is a surface read from public materials. A dealer-account walkthrough of US
 Captured observations that are not yet decisions and do not drive scope on their own.
 
 **Usage during active selling (stakeholder note).** A stakeholder observed that dealers likely will not lean on the app much during active selling, they have little time in a client meeting. Part of this is habit, the old Trinity software was clunky and not always white-labelled, so dealers avoided pulling it out in front of clients. This suggests the app's real value sits in preparation and follow-up rather than the live selling moment. To act on it, we need a phased pre-sell, sell, and post-sell use-case segmentation, so we can isolate where each feature is most useful. Recorded as a note, not a driver, nothing else in this PRD is rewritten around it yet.
+
+# 24. Project Expenses
+
+This section is for visibility for stakeholders and leadership to see what products or services we have started using for this project, why, the cost, and if they are scaleable in the future or limited to this project.
+
+|Product/Service|Use Case|Plan, Cost, and Time|
+|  ---  |  ---  |  ---  |
+|[Replit](https://replit.com/)|AI vibe-coding platform that combines a code editor, an AI agent, a database, hosting, and deployment in a single tab, with no local installation or infrastructure setup.|Skiffle Team (3)<br>$20/mo. + additional usage|
+|[Mobbin](https://mobbin.com/)|A vast collection of visual videos, and images of popular apps for inspiration and guidance. Helps fill in gaps in design and UX for the team. MCP connected to Figma. |Team Plan (2)<br>$144/quarter (only alt to annual)|
+|[Monday](http://Monday.com)|Project management, communication, documentation, etc.|Initially Skiffle IC team (3)<br>$74/mo. (monthly)|
+|[Amplitude](https://amplitude.com/)|User analytics for app & web (scalable)|TBD|
